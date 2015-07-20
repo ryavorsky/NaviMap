@@ -1,6 +1,5 @@
 package com.example.navimap;
 
-import com.example.navimap.R;
 import com.google.android.gms.maps.model.LatLng;
 
 import android.app.Activity;
@@ -11,6 +10,8 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import com.navimap.utils.NaviMapUtils;
+import com.navimap.utils.NaviSupport;
 
 public class PickupActivity extends Activity {
 	
@@ -62,7 +63,7 @@ public class PickupActivity extends Activity {
 	        	}
 				
 	        	String request = query;
-	        	LatLng res = NaviMapServices.getLatLng(request, "locality:Москва");
+	        	LatLng res = NaviMapUtils.getLatLng(request, "locality:пїЅпїЅпїЅпїЅпїЅпїЅ");
         			
         		Intent resultIntent = new Intent();
         		if(res!=null){

@@ -1,6 +1,5 @@
 package com.example.navimap;
 
-import com.example.navimap.R;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -16,14 +15,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.navimap.utils.NaviMapUtils;
+import com.navimap.utils.NaviSupport;
 
 public class MainMenu extends FragmentActivity implements OnMapReadyCallback {
 
@@ -57,7 +55,7 @@ public class MainMenu extends FragmentActivity implements OnMapReadyCallback {
 	    tv_addrPost = (TextView)findViewById(R.id.tv_post);
 	    tv_addrNavi = (TextView)findViewById(R.id.tv_navi);
 	    
-	    //Показываем стартовый черный экран загрузки
+	    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	    ((RelativeLayout)findViewById(R.id.layout_map)).setVisibility(View.GONE);
 	    ((LinearLayout)findViewById(R.id.layout_start)).setVisibility(View.VISIBLE);
 	    	    
@@ -66,7 +64,7 @@ public class MainMenu extends FragmentActivity implements OnMapReadyCallback {
 	    mapFragment.getMapAsync(this);
 	    
 		try {
-			//Перемещаем стандартную кнопку My Location на гугл карте вниз-влево
+			//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ My Location пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅ
 			View btnMyLocation = ((View) mapFragment.getView().findViewById(1)
 					.getParent()).findViewById(2);
 
@@ -126,7 +124,7 @@ public class MainMenu extends FragmentActivity implements OnMapReadyCallback {
 			@Override
 			public void onMyLocationChange(Location arg0) {
 				if(LastLatLng == null){
-					//Первый раз нашли свое местоположение
+					//пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 					location_found = true;
 					
 					LastLatLng = new LatLng(arg0.getLatitude(), arg0.getLongitude());
@@ -141,7 +139,7 @@ public class MainMenu extends FragmentActivity implements OnMapReadyCallback {
 						e.printStackTrace();
 					}
 					
-					//Показываем основной слой вместо стартового
+					//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 					((RelativeLayout)findViewById(R.id.layout_map)).setVisibility(View.VISIBLE);
 				    ((LinearLayout)findViewById(R.id.layout_start)).setVisibility(View.GONE);
 				    
@@ -158,7 +156,7 @@ public class MainMenu extends FragmentActivity implements OnMapReadyCallback {
 		    public void onCameraChange(CameraPosition cameraPosition) {
 		    	tv_addrNavi.setText(NaviSupport.GetNavi8(cameraPosition.target.latitude, cameraPosition.target.longitude));
 		    	
-		    	//Запрашиваем почтовый адрес у гугла
+		    	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ
 		    	new GetPostAddr().execute(new LatLng(cameraPosition.target.latitude, cameraPosition.target.longitude));
 		    }
 		});
@@ -171,12 +169,12 @@ public class MainMenu extends FragmentActivity implements OnMapReadyCallback {
         @Override
         protected String doInBackground(LatLng... params) {
         	k = (++num_request);
-        	return NaviMapServices.getAddrByLatLng(params[0]);
+        	return NaviMapUtils.getAddrByLatLng(params[0]);
         }
         
         @Override
         protected void onPostExecute(String result) {
-        	//Проверяем, что этот запрос был последним. Иначе не нужно обновлять текст
+        	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
         	if (k==num_request){
         		if(result!=null) tv_addrPost.setText(result);
         		else tv_addrPost.setText(" ");
@@ -195,7 +193,7 @@ public class MainMenu extends FragmentActivity implements OnMapReadyCallback {
 	    		  CameraUpdate start_pos = CameraUpdateFactory.newLatLngZoom(new LatLng(data.getDoubleExtra("lat", 0), data.getDoubleExtra("lng", 0)), start_zoom);
 	    		  map.animateCamera(start_pos);
 	    	  } catch(Exception e){
-	    		  //Сюда мы попадем, если карта не инициализирована
+	    		  //пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	    		  Toast.makeText(this, data.getDoubleExtra("lat", 0)+", "+data.getDoubleExtra("lng", 0), Toast.LENGTH_LONG).show();
 	    	  }
 	      } else if (resultCode == PICKUP_ACTIVITY_ERROR) {

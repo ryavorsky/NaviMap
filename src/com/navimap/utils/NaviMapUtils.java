@@ -1,8 +1,9 @@
-package com.example.navimap;
+package com.navimap.utils;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.navimap.MyUrlConnectionClient;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.PolyUtil;
 
@@ -10,7 +11,7 @@ import retrofit.RestAdapter;
 import retrofit.http.GET;
 import retrofit.http.Query;
 
-public class NaviMapServices {
+public class NaviMapUtils {
 	
 	public static List<LatLng> getPoints(String startGeoPoint, String stopGeoPoint){
 		try {
@@ -180,7 +181,7 @@ public class NaviMapServices {
 	    			res += cmp.get(i).short_name;
 	    			res += ", ";
 	    		}
-	    	if(!res.equals("")) return res.substring(0, res.length()-2); //Убирам лишнюю подстроку ", " из окончания
+	    	if(!res.equals("")) return res.substring(0, res.length()-2); //пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ ", " пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	    	else return null;
 	    }
 	    
