@@ -1,0 +1,31 @@
+apply plugin: 'com.android.application'
+apply plugin: 'testfairy'
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion '21.1.1'
+    defaultConfig {
+        applicationId "com.navimap"
+        minSdkVersion 14
+        targetSdkVersion 21
+        versionCode 4
+        versionName "0.0.4"
+    }
+    buildTypes {
+        debug {
+            debuggable true
+            applicationIdSuffix '.staging'
+            versionNameSuffix '.staging'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.android.support:appcompat-v7:21.+'
+    compile 'com.android.support:cardview-v7:21.+'
+    compile 'com.android.support:recyclerview-v7:21.+'
+    compile 'com.j256.ormlite:ormlite-android:4.48'
+    compile 'com.google.android.gms:play-services:6.+'
+
+}
