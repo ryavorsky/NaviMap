@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.navimap"
-    android:versionCode="1"
-    android:versionName="0.0.1" >
+    package="com.navimap.testfairy"
+    android:versionCode="3"
+    android:versionName="0.0.3" >
     
     <uses-permission android:name="android.permission.INTERNET"/>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -21,7 +21,7 @@
         
         
         <activity 
-        	android:name="com.example.navimap.MainMenu"
+        	android:name="com.navimap.MainMenu"
         	android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,22 +30,14 @@
         </activity>
         
         <activity 
-        	android:name="com.example.navimap.PickupActivity"
+        	android:name="com.navimap.PickupActivity"
         	android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.SAMPLE_CODE" />
             </intent-filter>
         </activity>
-        
-        <activity 
-        	android:name="com.example.navimap.DestinationChoose"
-        	android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.SAMPLE_CODE" />
-            </intent-filter>
-        </activity>
+
 
         
         <meta-data android:name="com.google.android.gms.version"

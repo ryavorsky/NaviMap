@@ -21,7 +21,7 @@
         
         
         <activity 
-        	android:name="com.example.navimap.MainMenu"
+        	android:name="com.navimap.MainMenu"
         	android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,7 +30,7 @@
         </activity>
         
         <activity 
-        	android:name="com.example.navimap.PickupActivity"
+        	android:name="com.navimap.PickupActivity"
         	android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
