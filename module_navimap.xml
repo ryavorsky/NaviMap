@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_navimap" default="compile.module.navimap">
+  <dirname property="module.navimap.basedir" file="${ant.file.module_navimap}"/>
+  
+  <property name="module.jdk.home.navimap" value="${jdk.home.android_api_17_platform}"/>
+  <property name="module.jdk.bin.navimap" value="${jdk.bin.android_api_17_platform}"/>
+  <property name="module.jdk.classpath.navimap" value="jdk.classpath.android_api_17_platform"/>
+  
+  <property name="compiler.args.navimap" value="-encoding windows-1251 -source 1.6 ${compiler.args}"/>
+  
+  <property name="navimap.output.dir" value="${module.navimap.basedir}/bin/classes"/>
+  <property name="navimap.testoutput.dir" value="${module.navimap.basedir}/bin/classes"/>
+  
+  <path id="navimap.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="navimap.module.production.classpath">
+    <path refid="${module.jdk.classpath.navimap}"/>
+    <pathelement location="${google-play-services_lib.output.dir}"/>
+    <fileset dir="${basedir}/libs">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <path id="navimap.runtime.production.module.classpath">
+    <pathelement location="${navimap.output.dir}"/>
+    <path refid="google-play-services_lib.runtime.production.module.classpath"/>
+    <fileset dir="${basedir}/libs">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <path id="navimap.module.classpath">
+    <path refid="${module.jdk.classpath.navimap}"/>
+    <pathelement location="${navimap.output.dir}"/>
+    <pathelement location="${google-play-services_lib.testoutput.dir}"/>
+    <pathelement location="${google-play-services_lib.output.dir}"/>
+    <fileset dir="${basedir}/libs">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <path id="navimap.runtime.module.classpath">
+    <pathelement location="${navimap.output.dir}"/>
+    <path refid="google-play-services_lib.runtime.module.classpath"/>
+    <fileset dir="${basedir}/libs">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.navimap">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.navimap">
+    <patternset refid="excluded.from.module.navimap"/>
+  </patternset>
+  
+  <path id="navimap.module.sourcepath">
+    <dirset dir="${module.navimap.basedir}">
+      <include name="src"/>
+      <include name="gen"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.navimap" depends="compile.module.navimap.production,compile.module.navimap.tests" description="Compile module NaviMap"/>
+  
+  <target name="compile.module.navimap.production" depends="register.custom.compilers,compile.module.google-play-services_lib" description="Compile module NaviMap; production classes">
+    <mkdir dir="${navimap.output.dir}"/>
+    <javac2 destdir="${navimap.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.navimap}/javac">
+      <compilerarg line="${compiler.args.navimap}"/>
+      <bootclasspath refid="navimap.module.bootclasspath"/>
+      <classpath refid="navimap.module.production.classpath"/>
+      <src refid="navimap.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.navimap"/>
+    </javac2>
+    
+    <copy todir="${navimap.output.dir}">
+      <fileset dir="${module.navimap.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.navimap.basedir}/gen">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.navimap.tests" depends="register.custom.compilers,compile.module.navimap.production" description="compile module NaviMap; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.navimap" description="cleanup module">
+    <delete dir="${navimap.output.dir}"/>
+    <delete dir="${navimap.testoutput.dir}"/>
+  </target>
+</project>
