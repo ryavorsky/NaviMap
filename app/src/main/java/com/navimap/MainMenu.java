@@ -1,29 +1,27 @@
 package com.navimap;
 
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-
 import android.content.Intent;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.google.android.gms.maps.*;
+import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
 import com.navimap.utils.NaviMapUtils;
 import com.navimap.utils.NaviSupport;
 
-public class MainMenu extends FragmentActivity implements OnMapReadyCallback {
+public class MainMenu extends ActionBarActivity implements OnMapReadyCallback {
 
 	public static final int start_zoom = 17;	
 	public static final int PICKUP_ACTIVITY_OK = 2001;
@@ -78,18 +76,41 @@ public class MainMenu extends FragmentActivity implements OnMapReadyCallback {
 	    
    
 	    ll_pickup.setOnClickListener(new View.OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent();
-			    intent.setClass(MainMenu.this, PickupActivity.class);
-			    startActivityForResult(intent, PICKUP_ACTIVITY_REQUEST_CODE);
+				intent.setClass(MainMenu.this, PickupActivity.class);
+				startActivityForResult(intent, PICKUP_ACTIVITY_REQUEST_CODE);
 			}
 		});
 	    
 	    new NoLocationFoundTask().execute();
   
 	};
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle presses on the action bar items
+		switch (item.getItemId()) {
+			case R.id.share:
+				Intent sendIntent = new Intent();
+				sendIntent.setAction(Intent.ACTION_SEND);
+				sendIntent.putExtra(Intent.EXTRA_TEXT, NaviSupport.getLink(tv_addrNavi.getText().toString()));
+				sendIntent.setType("text/plain");
+				startActivity(sendIntent);
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+	}
 	
 	private class NoLocationFoundTask extends AsyncTask<Void, Void, Void> {
 

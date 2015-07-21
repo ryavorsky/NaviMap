@@ -1,7 +1,6 @@
 package com.navimap.utils;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.navimap.utils.NaviMapUtils;
 
 public class NaviSupport {
 	
@@ -34,5 +33,9 @@ public class NaviSupport {
 		String str = NaviMapUtils.getAddr(city, Integer.toString(Navi));
 		if(str==null) return null;
 		return NaviMapUtils.getLatLng(str, "");
+	}
+
+	public static String getLink(String code) {
+		return "http://navic.me/07495."+code.replace(" ","");
 	}
 }
