@@ -1,4 +1,4 @@
-package com.example.navimap;
+package com.navimap;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;

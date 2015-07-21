@@ -3,7 +3,7 @@ package com.navimap.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.navimap.MyUrlConnectionClient;
+import com.navimap.MyUrlConnectionClient;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.PolyUtil;
 

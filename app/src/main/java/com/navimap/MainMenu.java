@@ -1,4 +1,4 @@
-package com.example.navimap;
+package com.navimap;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;

@@ -1,8 +1,12 @@
-package com.example.navimap;
+package com.navimap;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -10,7 +14,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import com.navimap.adapter.AddressAdapter;
 import com.navimap.utils.LogUtils;
+
+import java.io.IOException;
+import java.util.List;
 
 public class PickupActivity extends Activity {
     private static final String city_code = "7495";
@@ -18,14 +26,18 @@ public class PickupActivity extends Activity {
     private EditText inputEditText;
     private ImageView voiceInputButton;
     private RecyclerView addressList;
+    private RecyclerView.Adapter addressAdapter;
+    private RecyclerView.LayoutManager addressLayoutManager;
     private ProgressBar progressBar;
+    private Geocoder geocoder;
+    private SearchTask searchTask;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initView();
         initListeners();
-
+        geocoder = new Geocoder(this);
 
     }
 
@@ -33,8 +45,11 @@ public class PickupActivity extends Activity {
         setContentView(R.layout.pickup_menu);
         inputEditText = (EditText) findViewById(R.id.inputEditText);
         voiceInputButton = (ImageView) findViewById(R.id.voiceInputButton);
-        addressList = (RecyclerView) findViewById(R.id.addressList);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        addressList = (RecyclerView) findViewById(R.id.addressList);
+        addressList.setHasFixedSize(true);
+        addressLayoutManager = new LinearLayoutManager(this);
+        addressList.setLayoutManager(addressLayoutManager);
     }
 
     private void initListeners() {
@@ -46,12 +61,15 @@ public class PickupActivity extends Activity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                new SearchTask().execute(s);
+
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-
+                if (searchTask!=null)
+                    searchTask.cancel(true);
+                searchTask = new SearchTask();
+                searchTask.execute(s.toString());
             }
         });
     }
@@ -67,17 +85,29 @@ public class PickupActivity extends Activity {
         protected Object doInBackground(Object[] params) {
             String query = (String) params[0];
             try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
+                List<Address> addressList = geocoder.getFromLocationName(query, 20);
+                return addressList;
+            } catch (IOException e) {
                 LogUtils.e(e);
+                return e;
             }
-            return null;
         }
 
         @Override
         protected void onPostExecute(Object result) {
             if (progressBar != null)
                 progressBar.setVisibility(View.GONE);
+            if (result instanceof IOException) {
+                new AlertDialog.Builder(PickupActivity.this).setMessage(R.string.error_receiving_addresses).show();
+            } else if (result instanceof List) {
+                List<Address> list = (List<Address>) result;
+                String[] addresses = new String[list.size()];
+                for (int i =0; i<list.size(); i++) {
+                    addresses[i] = list.get(i).toString();
+                }
+                addressAdapter = new AddressAdapter(addresses);
+                addressList.setAdapter(addressAdapter);
+            }
         }
 
     }
