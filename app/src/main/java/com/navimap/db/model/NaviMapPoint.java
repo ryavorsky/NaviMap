@@ -17,6 +17,7 @@ public class NaviMapPoint extends BaseModel {
     public static final String COLUMN_NAVI_ADDRESS = "navi_address";
     public static final String COLUMN_ADDRESS = "address";
     public static final String COLUMN_IS_FAVORITE = "is_favorite";
+    public static final String COLUMN_SEARCH_FIELD = "search_field";
 
     @DatabaseField(columnName = COLUMN_LATITUDE, dataType = DataType.DOUBLE_OBJ)
     private Double latitude;
@@ -28,6 +29,8 @@ public class NaviMapPoint extends BaseModel {
     private String address;
     @DatabaseField(columnName = COLUMN_IS_FAVORITE, dataType = DataType.BOOLEAN)
     private boolean isFavorite;
+    @DatabaseField(columnName = COLUMN_SEARCH_FIELD, dataType = DataType.STRING)
+    private String searchField;
 
     public NaviMapPoint() {
     }
@@ -38,6 +41,7 @@ public class NaviMapPoint extends BaseModel {
         this.naviAddress = naviAddress;
         this.address = address;
         this.isFavorite = isFavorite;
+        this.searchField = this.address.toUpperCase()+" "+this.naviAddress.toUpperCase();
     }
 
     public Double getLongitude() {

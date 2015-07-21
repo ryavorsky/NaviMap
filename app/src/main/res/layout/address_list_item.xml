@@ -1,3 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView  xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/addressTitle"
-        android:padding="10dp"/>
+<android.support.v7.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="1dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="2dp">
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF"
+            android:padding="5dp">
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/favoriteImageView"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"/>
+        <LinearLayout
+                android:id="@+id/enterLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_toLeftOf="@+id/favoriteImageView">
+
+            <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/naviAddressContainer">
+
+                <TextView
+                        android:id="@+id/naviHeader"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pickup_title"
+                        android:textColor="#3c73b5"
+                        android:textSize="12sp"
+                        android:typeface="normal"
+                        android:textStyle="bold"/>
+
+                <TextView
+                        android:id="@+id/naviTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="#333333"
+                        android:textSize="14sp"
+                        android:typeface="normal"
+                        android:textStyle="bold"
+                        android:layout_toRightOf="@+id/naviHeader"/>
+
+
+            </RelativeLayout>
+
+            <TextView
+                    android:id="@+id/nameTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#606060"
+                    android:textSize="14sp"
+                    android:ellipsize="start"
+                    android:maxLines="2"
+                    android:lines="2"/>
+        </LinearLayout>
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

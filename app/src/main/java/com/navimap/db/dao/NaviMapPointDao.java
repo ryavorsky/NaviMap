@@ -10,5 +10,6 @@ import java.util.List;
  * Created by Makvit on 21.07.2015.
  */
 public interface NaviMapPointDao extends Dao<NaviMapPoint, Long> {
-    public List<NaviMapPoint> getNaviMapPoints() throws SQLException;
+    public List<NaviMapPoint> getNaviMapPoints(String query) throws SQLException;
+    public NaviMapPoint getNaviMapPointByAddressName(String query) throws SQLException;
 }

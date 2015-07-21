@@ -11,7 +11,7 @@ public class BaseModel implements Serializable{
     public static final String COLUMN_CREATED_AT = "_created_at";
     public static final String COLUMN_UPDATED_AT = "_updated_at";
 
-    @DatabaseField(id = true, columnName = COLUMN_ID)
+    @DatabaseField(generatedId = true, columnName = COLUMN_ID)
     protected long _id = -1;
     @DatabaseField(columnName = COLUMN_CREATED_AT, dataType = DataType.DATE_LONG)
     protected Date createdAt;

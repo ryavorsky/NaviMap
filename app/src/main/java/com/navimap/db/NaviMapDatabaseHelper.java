@@ -14,7 +14,7 @@ import java.sql.SQLException;
 public class NaviMapDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "navimap.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     private static NaviMapDatabaseHelper instance;
 
@@ -54,7 +54,7 @@ public class NaviMapDatabaseHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         try {
-            if (newVersion <= 1) {
+            if (newVersion <= 2) {
                 drop(connectionSource);
                 create(connectionSource);
             } else {
