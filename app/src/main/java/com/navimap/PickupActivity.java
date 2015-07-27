@@ -33,7 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PickupActivity extends Activity implements AddressAdapter.ViewHolder.IMyViewHolderClicks {
-    private static final String city_code = "7495";
+    public static final String EXTRA_CITY_CODE = "extra_city_code";
+    private String cityCode = null;
     private static final int SPEECH_REQUEST_CODE = 0;
     private EditText inputEditText;
     private ImageView voiceInputButton;
@@ -47,6 +48,9 @@ public class PickupActivity extends Activity implements AddressAdapter.ViewHolde
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle extras = getIntent().getExtras();
+        if (extras!=null)
+            cityCode = extras.getString(EXTRA_CITY_CODE);
         initView();
         initListeners();
         geocoder = new Geocoder(this);
@@ -109,10 +113,11 @@ public class PickupActivity extends Activity implements AddressAdapter.ViewHolde
                 LatLng latLng = null;
                 if (query.matches("^[0-9 ]+")) {
                     query = query.replace(" ", "");
+                    query = query.substring(0,4)+" "+query.substring(4,query.length());
                     if (query.length() == 8) {
-                        latLng = NaviSupport.GetLatLngNavi8(Integer.parseInt(query));
+                        latLng = NaviSupport.GetLatLngNavi8("("+cityCode+") "+query);
                     } else if (query.length() == 6) {
-                        latLng = NaviSupport.GetLatLngNavi6(city_code, Integer.parseInt(query));
+                        latLng = NaviSupport.GetLatLngNavi6(cityCode, Integer.parseInt(query));
                     }
                 } else {
                     try {
@@ -238,7 +243,8 @@ public class PickupActivity extends Activity implements AddressAdapter.ViewHolde
                         query = query.replace(" ", "");
                         LatLng latLng = null;
                         if (query.length() == 8) {
-                            latLng = NaviSupport.GetLatLngNavi8(Integer.parseInt(query));
+                            query = query.substring(0,4)+" "+query.substring(4,query.length());
+                            latLng = NaviSupport.GetLatLngNavi8("("+cityCode+") "+query);
                         }
                         if (latLng != null)
                             naviMapAddress = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
@@ -300,7 +306,7 @@ public class PickupActivity extends Activity implements AddressAdapter.ViewHolde
         public AddressDTO(Address address) {
             this.latLng = new LatLng(address.getLatitude(), address.getLongitude());
             this.addressName = StringUtils.addressToString(address);
-            this.naviAddress = NaviSupport.GetNavi8(address.getLatitude(), address.getLongitude());
+            this.naviAddress = NaviSupport.getNavi8Code(new LatLng(address.getLatitude(), address.getLongitude()));
         }
 
         public AddressDTO(NaviMapPoint naviMapPoint) {

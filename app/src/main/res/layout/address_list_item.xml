@@ -35,7 +35,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/pickup_title"
                         android:textColor="#3c73b5"
-                        android:textSize="12sp"
+                        android:textSize="14sp"
                         android:typeface="normal"
                         android:textStyle="bold"/>
 
@@ -44,7 +44,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="#333333"
-                        android:textSize="14sp"
+                        android:textSize="16sp"
                         android:typeface="normal"
                         android:textStyle="bold"
                         android:layout_toRightOf="@+id/naviHeader"/>
@@ -57,7 +57,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="#606060"
-                    android:textSize="14sp"
+                    android:textSize="16sp"
                     android:ellipsize="start"
                     android:maxLines="2"
                     android:lines="2"/>

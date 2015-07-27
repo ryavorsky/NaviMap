@@ -18,9 +18,9 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        
-        
-        <activity 
+
+
+        <activity
         	android:name="com.navimap.MainMenu"
         	android:screenOrientation="portrait"
                 android:label="NaviMap">
@@ -29,8 +29,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-        <activity 
+
+        <activity
         	android:name="com.navimap.PickupActivity"
         	android:screenOrientation="portrait">
             <intent-filter>
@@ -39,7 +39,20 @@
             </intent-filter>
         </activity>
 
-        
+        <activity android:name="com.navimap.ui.DeepLinkingActivity"
+                  android:configChanges="keyboardHidden|orientation"
+                  android:screenOrientation="portrait"
+                  android:windowSoftInputMode="stateHidden"
+                  android:theme="@style/Theme.Transparent">
+            <intent-filter android:label="@string/app_name">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="http" android:host="navic.me"/>
+            </intent-filter>
+        </activity>
+
+
         <meta-data android:name="com.google.android.gms.version"
         	android:value="@integer/google_play_services_version" />
         <meta-data android:name="com.google.android.geo.API_KEY"
