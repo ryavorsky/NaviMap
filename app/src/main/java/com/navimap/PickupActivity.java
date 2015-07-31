@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
@@ -24,7 +25,7 @@ import com.navimap.db.NaviMapDatabaseHelper;
 import com.navimap.db.dao.NaviMapPointDao;
 import com.navimap.db.model.NaviMapPoint;
 import com.navimap.utils.LogUtils;
-import com.navimap.utils.NaviSupport;
+import com.navimap.utils.MapUtils;
 import com.navimap.utils.StringUtils;
 
 import java.io.IOException;
@@ -115,9 +116,9 @@ public class PickupActivity extends Activity implements AddressAdapter.ViewHolde
                     query = query.replace(" ", "");
                     query = query.substring(0,4)+" "+query.substring(4,query.length());
                     if (query.length() == 8) {
-                        latLng = NaviSupport.GetLatLngNavi8("("+cityCode+") "+query);
+                        latLng = MapUtils.GetLatLngNavi8("(" + cityCode + ") " + query);
                     } else if (query.length() == 6) {
-                        latLng = NaviSupport.GetLatLngNavi6(cityCode, Integer.parseInt(query));
+                        latLng = MapUtils.GetLatLngNavi6(cityCode, Integer.parseInt(query));
                     }
                 } else {
                     try {
@@ -229,7 +230,7 @@ public class PickupActivity extends Activity implements AddressAdapter.ViewHolde
         @Override
         protected Object doInBackground(Object[] params) {
             String query = (String) params[0];
-            List<Address> naviMapAddress = new ArrayList<Address>();
+            AddressDTO naviMapAddress=null;
             List<Address> addresses = new ArrayList<Address>();
             List<AddressDTO> savedAddresses = new ArrayList<AddressDTO>();
 
@@ -243,11 +244,18 @@ public class PickupActivity extends Activity implements AddressAdapter.ViewHolde
                         query = query.replace(" ", "");
                         LatLng latLng = null;
                         if (query.length() == 8) {
-                            query = query.substring(0,4)+" "+query.substring(4,query.length());
-                            latLng = NaviSupport.GetLatLngNavi8("("+cityCode+") "+query);
+                            String naviCode ="("+cityCode.replaceFirst("0", "+")+") "+query.substring(0,4)+" "+query.substring(4,query.length());
+                            latLng = MapUtils.GetLatLngNavi8(naviCode);
+                            if (latLng != null) {
+                                List<Address> list = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+                                naviMapAddress = new AddressDTO();
+                                naviMapAddress.setNaviAddress(naviCode);
+                                naviMapAddress.setLatLng(latLng);
+                                if (list.size()>0)
+                                    naviMapAddress.setAddressName(StringUtils.addressToString(list.get(0)));
+                            }
                         }
-                        if (latLng != null)
-                            naviMapAddress = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+
                     }
                     addresses = geocoder.getFromLocationName(query, 20);
                 } catch (IOException e) {
@@ -278,15 +286,19 @@ public class PickupActivity extends Activity implements AddressAdapter.ViewHolde
             } else if (result instanceof Object[]) {
                 Object[] data = (Object[]) result;
                 List<AddressDTO> addresses = (List<AddressDTO>) data[0];
-                List<Address> naviList = (List<Address>) data[1];
+                AddressDTO naviAddress = (AddressDTO) data[1];
                 List<Address> googleList = (List<Address>) data[2];
-                for (Address address : naviList) {
-                    addresses.add(new AddressDTO(address));
-                }
+                if (naviAddress!=null)
+                    addresses.add(0, naviAddress);
                 for (Address address : googleList) {
                     addresses.add(new AddressDTO(address));
                 }
-                addressAdapter = new AddressAdapter(addresses, PickupActivity.this);
+                LatLng myLatLng= null;
+                for (MapUtils.City city : MapUtils.City.values())
+                    if (city.getNaviCode().equals(cityCode)) {
+                        myLatLng = city.getLatLng();
+                    }
+                addressAdapter = new AddressAdapter(addresses, PickupActivity.this, myLatLng);
                 addressList.setAdapter(addressAdapter);
             }
         }
@@ -306,7 +318,7 @@ public class PickupActivity extends Activity implements AddressAdapter.ViewHolde
         public AddressDTO(Address address) {
             this.latLng = new LatLng(address.getLatitude(), address.getLongitude());
             this.addressName = StringUtils.addressToString(address);
-            this.naviAddress = NaviSupport.getNavi8Code(new LatLng(address.getLatitude(), address.getLongitude()));
+            this.naviAddress = MapUtils.getNavi8(new LatLng(address.getLatitude(), address.getLongitude()));
         }
 
         public AddressDTO(NaviMapPoint naviMapPoint) {

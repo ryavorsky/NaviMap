@@ -1,15 +1,24 @@
 package com.navimap.adapter;
 
+import android.graphics.Color;
+import android.location.Location;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import com.google.android.gms.maps.model.LatLng;
 import com.navimap.PickupActivity;
 import com.navimap.R;
+import com.navimap.utils.MapUtils;
 import com.navimap.utils.StringUtils;
 
 import java.util.List;
@@ -20,11 +29,13 @@ import java.util.List;
 public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHolder> {
     private List<PickupActivity.AddressDTO> mDataset;
     private ViewHolder.IMyViewHolderClicks listener;
+    LatLng myLatLng;
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public AddressAdapter(List<PickupActivity.AddressDTO> myDataset, ViewHolder.IMyViewHolderClicks listener) {
+    public AddressAdapter(List<PickupActivity.AddressDTO> myDataset, ViewHolder.IMyViewHolderClicks listener, LatLng myLatLng) {
         mDataset = myDataset;
         this.listener = listener;
+        this.myLatLng = myLatLng;
     }
 
     public void setItems(List<PickupActivity.AddressDTO> mDataset, boolean notify) {
@@ -52,7 +63,20 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
         if (StringUtils.isNullOrEmpty(addressDTO.getNaviAddress())) {
             holder.naviAddressContainer.setVisibility(View.INVISIBLE);
         } else {
+            String value= addressDTO.getNaviAddress();
             holder.naviTextView.setText(addressDTO.getNaviAddress());
+            if (myLatLng != null) {
+                MapUtils.City city = MapUtils.getNearestCity(myLatLng);
+                if (value.contains("(" + city.getNaviCode().replace("0", "+") + ")")) {
+                    int start = value.indexOf("(");
+                    int end = value.indexOf(")") + 1;
+                    if (start<end) {
+                        Spannable wordtoSpan = new SpannableString(value);
+                        wordtoSpan.setSpan(new ForegroundColorSpan(Color.LTGRAY), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        holder.naviTextView.setText(wordtoSpan);
+                    }
+                }
+            }
             holder.naviAddressContainer.setVisibility(View.VISIBLE);
 
         }
@@ -65,6 +89,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
         else
             holder.favoriteImageView.setImageResource(android.R.drawable.btn_star_big_off);
         holder.container.setTag(addressDTO);
+
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -109,6 +134,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
             naviAddressContainer.setOnClickListener(this);
             nameTextView.setOnClickListener(this);
             favoriteImageView.setOnClickListener(this);
+
         }
 
         @Override

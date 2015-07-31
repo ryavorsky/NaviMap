@@ -8,6 +8,8 @@ import com.navimap.settings.Constants;
  * Created by Makvit on 27.07.2015.
  */
 public class MapUtils {
+    private static final double k1 = 111111.1;
+    private static final double k2 = 62647.6;
 
     /**
      * Returns the approximate distance in meters between this location and the given location. Distance is defined using the WGS84 ellipsoid.
@@ -17,40 +19,77 @@ public class MapUtils {
      * @return the approximate distance in meters
      */
     public static double getDistance(LatLng latLng1, LatLng latLng2) {
-        Location location1 = new Location("");
-        location1.setLatitude(latLng1.latitude);
-        location1.setLongitude(latLng1.longitude);
-        Location location2 = new Location("");
-        location2.setLatitude(latLng2.latitude);
-        location2.setLongitude(latLng2.longitude);
-        return location1.distanceTo(location2);
+        double d1 = (latLng1.latitude-latLng2.latitude)*k1;
+        double d2 = (latLng1.longitude-latLng2.longitude)*k2;
+        return Math.sqrt(d1*d1+d2*d2);
     }
 
     public static City getNearestCity(LatLng latLng) {
         return City.getNearestCity(latLng);
     }
 
-    /**
-     * расстояние до экватора и гринвича
-     *
-     * @param latLng
-     * @return
-     */
-    public static Double[] getZeroAxisDistance(LatLng latLng) {
-        return getDistancesToAxis(latLng, new LatLng(0, 0));
+    public static String getNavi8(LatLng latLng){
+        MapUtils.City city = MapUtils.City.getNearestCity(latLng);
+        double[] d = new double[2];
+        d[0] = (latLng.latitude-city.getLat())*k1;
+        d[1] = (latLng.longitude-city.getLng())*k2;
+
+        int navi1 = (int)Math.round(d[0]/10) + 5000;
+        int navi2 = (int)Math.round(d[1]/10) + 5000;
+
+        if (navi1 < 0 || navi1 > 9999 || navi2 < 0 || navi2 > 9999) {
+            d[0] = latLng.latitude*k1+55000000;
+            d[1] = latLng.latitude*k2+55000000;
+            int[] dist = new int[2];
+            dist[0] = (int) (d[0]/10);
+            dist[1] = (int) (d[1]/10);
+            String code = String.valueOf(dist[0]).substring(0,3)+String.valueOf(dist[1]).substring(0,3);
+            String index = String.format("%04d",dist[0] % 10000) + " " + String.format("%04d", dist[1] % 10000);
+            return "(" + code + ") " + index;
+        } else {
+            return "(" + city.getNaviCode().replaceFirst("0", "+") + ") " +  String.format("%04d",navi1) + " " +  String.format("%04d",navi2);
+        }
     }
 
-    public static Double[] getDistancesToAxis(LatLng targetLocation, LatLng axisLocation) {
-        double distanceToEquator = MapUtils.getDistance(targetLocation, new LatLng(axisLocation.latitude, targetLocation.longitude)) * Math.signum(targetLocation.longitude - axisLocation.longitude);
-        double distanceToGreenwich = MapUtils.getDistance(targetLocation, new LatLng(targetLocation.latitude, axisLocation.longitude)) * Math.signum(targetLocation.latitude - axisLocation.latitude);
-        return new Double[]{distanceToEquator, distanceToGreenwich};
+    public static LatLng GetLatLngNavi8(String code){
+        LatLng latLng=null;
+        String strCityNaviCode = code.substring(0, code.indexOf(" ")).replace("(", "").replace(")", "").replace("+", "0");
+        String strNaviCode = code.substring(code.indexOf(" ")).replace(" ","");
+        int naviCode = Integer.parseInt(strNaviCode);
+        int cityCode = Integer.parseInt(strCityNaviCode);
+        int[] d = new int[]{(int)Math.floor(naviCode/10000),naviCode%10000};
+        if (cityCode<100000) {
+            City city = null;
+            for (City item : City.values()) {
+                if (item.getNaviCode().equals(strCityNaviCode))
+                    city = item;
+            }
+            if (city!=null) {
+                double lat = (d[0]-5000)*10/k1+city.getLat();
+                double lng = (d[1]-5000)*10/k2+city.getLng();
+                latLng = new LatLng(lat, lng);
+            }
+        } else {
+            double[] dist = new double[2];
+            dist[0] = ((int)Math.floor(cityCode/1000))*10000+((int)Math.floor(naviCode/10000));
+            dist[1] = cityCode%1000 *10000+ naviCode%10000;
+            dist[0] = dist[0]*10-55000000;
+            dist[1] = dist[1]*10-55000000;
+            double lat = d[0]/k1;
+            double lng = d[1]/k2;
+            latLng = new LatLng(lat, lng);
+        }
+        return latLng;
     }
 
-    public static Double[] getZeroAxisNaviAddress(LatLng latLng) {
-        Double[] distance = getZeroAxisDistance(latLng);
-        distance[0] = distance[0] + 55000000;
-        distance[1] = distance[1] + 55000000;
-        return distance;
+    public static LatLng GetLatLngNavi6(String city, int Navi) {
+        String str = NaviMapUtils.getAddr(city, Integer.toString(Navi));
+        if (str == null) return null;
+        return NaviMapUtils.getLatLng(str, "");
+    }
+
+    public static String getLink(String code) {
+        return "http://navic.me/" + code.replace("(", "").replace("+", "0").replace(") ", ".").replace(" ", "");
     }
 
     public static boolean isCityCanBeUsedAsAxisToLocation(City city, LatLng location) {

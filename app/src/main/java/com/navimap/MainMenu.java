@@ -1,11 +1,19 @@
 package com.navimap;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.ShareActionProvider;
+import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -18,9 +26,9 @@ import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.navimap.utils.LogUtils;
 import com.navimap.utils.MapUtils;
 import com.navimap.utils.NaviMapUtils;
-import com.navimap.utils.NaviSupport;
 import com.navimap.utils.StringUtils;
 
 public class MainMenu extends ActionBarActivity implements OnMapReadyCallback {
@@ -39,6 +47,7 @@ public class MainMenu extends ActionBarActivity implements OnMapReadyCallback {
     private TextView tv_addrPost;
     private TextView tv_addrNavi;
     private String url = null;
+    /*private ShareActionProvider mShareActionProvider;*/
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,6 +64,32 @@ public class MainMenu extends ActionBarActivity implements OnMapReadyCallback {
         ll_pickup = (LinearLayout) findViewById(R.id.enterLocation);
         tv_addrPost = (TextView) findViewById(R.id.tv_post);
         tv_addrNavi = (TextView) findViewById(R.id.tv_navi);
+        tv_addrNavi.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Location location = map.getMyLocation();
+                if (location != null) {
+                    MapUtils.City city = MapUtils.getNearestCity(new LatLng(location.getLatitude(), location.getLongitude()));
+                    String value = s.toString();
+                    if (value.contains("("+city.getNaviCode().replace("0","+")+")")) {
+                        int start =value.indexOf("(") ;
+                        int end = value.indexOf(")")+1;
+                        s.setSpan(new ForegroundColorSpan(Color.LTGRAY), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
+                }
+
+            }
+        });
 
         //���������� ��������� ������ ����� ��������
         ((RelativeLayout) findViewById(R.id.layout_map)).setVisibility(View.GONE);
@@ -104,8 +139,20 @@ public class MainMenu extends ActionBarActivity implements OnMapReadyCallback {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
+        /*MenuItem shareItem = menu.findItem(R.id.share);
+        mShareActionProvider = (ShareActionProvider)
+                MenuItemCompat.getActionProvider(shareItem);
+        mShareActionProvider.setShareIntent(getDefaultIntent());*/
         return true;
     }
+/*
+    private Intent getDefaultIntent() {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, MapUtils.getLink(tv_addrNavi.getText().toString()));
+        sendIntent.setType("text/plain");
+        return sendIntent;
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -114,9 +161,15 @@ public class MainMenu extends ActionBarActivity implements OnMapReadyCallback {
             case R.id.share:
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, NaviSupport.getLink(tv_addrNavi.getText().toString()));
+                sendIntent.putExtra(Intent.EXTRA_TEXT, MapUtils.getLink(tv_addrNavi.getText().toString()));
                 sendIntent.setType("text/plain");
-                startActivity(sendIntent);
+                startActivity(Intent.createChooser(sendIntent, getString(R.string.share)));
+                return true;
+            case R.id.normal_map:
+                map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                return true;
+            case R.id.satellite_map:
+                map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -145,14 +198,15 @@ public class MainMenu extends ActionBarActivity implements OnMapReadyCallback {
                     if (!StringUtils.isNullOrEmpty(url)) {
                         String[] data = url.split("\\.");
                         String query = "(" + data[0] + ") " + data[1].substring(0, 4) + " " + data[1].substring(4, 8);
-                        LastLatLng = NaviSupport.GetLatLngNavi8(query);
+                        LastLatLng = MapUtils.GetLatLngNavi8(query);
                     } else {
                         LastLatLng = new LatLng(arg0.getLatitude(), arg0.getLongitude());
                     }
                     CameraUpdate start_pos = CameraUpdateFactory.newLatLngZoom(LastLatLng, start_zoom);
                     map.animateCamera(start_pos);
-                    tv_addrNavi.setText(NaviSupport.getNavi8Code(LastLatLng));
-
+                    tv_addrNavi.setText(MapUtils.getNavi8(LastLatLng));
+                   /* if (mShareActionProvider!=null)
+                        mShareActionProvider.setShareIntent(getDefaultIntent());*/
                     try {
                         Thread.sleep(2000);
                     } catch (InterruptedException e) {
@@ -175,8 +229,12 @@ public class MainMenu extends ActionBarActivity implements OnMapReadyCallback {
         map.setOnCameraChangeListener(new OnCameraChangeListener() {
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
-                tv_addrNavi.setText(NaviSupport.getNavi8Code(cameraPosition.target));
-
+                tv_addrNavi.setText(MapUtils.getNavi8(cameraPosition.target));
+                /*if (mShareActionProvider!=null)
+                mShareActionProvider.setShareIntent(getDefaultIntent());*/
+                LogUtils.d("position " + cameraPosition.target);
+                LogUtils.d("navi8 " + MapUtils.getNavi8(cameraPosition.target));
+                LogUtils.d("recovered position  "+ MapUtils.GetLatLngNavi8(MapUtils.getNavi8(cameraPosition.target)));
                 //����������� �������� ����� � �����
                 new GetPostAddr().execute(new LatLng(cameraPosition.target.latitude, cameraPosition.target.longitude));
             }

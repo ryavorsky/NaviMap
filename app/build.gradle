@@ -8,14 +8,14 @@ android {
         applicationId "com.navimap"
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 7
+        versionCode 8
         versionName "0.0.7"
     }
     buildTypes {
         debug {
             debuggable true
-            applicationIdSuffix '.testfairy'
-            versionNameSuffix '.testfairy'
+            applicationIdSuffix '.staging'
+            versionNameSuffix '.staging'
         }
     }
 }

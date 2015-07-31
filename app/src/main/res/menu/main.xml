@@ -6,5 +6,17 @@
             android:icon="@android:drawable/ic_menu_share"
             android:orderInCategory="100"
             app:showAsAction="always"
-            android:title="Share"/>
+            android:title="@string/share"/>
+    <item android:id="@+id/map_types"
+          android:icon="@android:drawable/ic_menu_mapmode"
+          android:title="@string/map_select"
+          app:showAsAction="always"
+            >
+        <menu>
+            <item android:id="@+id/normal_map"
+                  android:title="@string/map_normal"/>
+            <item android:id="@+id/satellite_map"
+                  android:title="@string/map_satellite"/>
+        </menu>
+    </item>
 </menu>
