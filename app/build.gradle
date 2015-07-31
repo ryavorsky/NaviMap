@@ -9,13 +9,13 @@ android {
         minSdkVersion 14
         targetSdkVersion 21
         versionCode 8
-        versionName "0.0.7"
+        versionName "0.0.8"
     }
     buildTypes {
         debug {
             debuggable true
-            applicationIdSuffix '.staging'
-            versionNameSuffix '.staging'
+            applicationIdSuffix '.testfairy'
+            versionNameSuffix '.testfairy'
         }
     }
 }
