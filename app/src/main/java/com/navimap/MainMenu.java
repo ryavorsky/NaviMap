@@ -234,7 +234,7 @@ public class MainMenu extends ActionBarActivity implements OnMapReadyCallback {
                 mShareActionProvider.setShareIntent(getDefaultIntent());*/
                 LogUtils.d("position " + cameraPosition.target);
                 LogUtils.d("navi8 " + MapUtils.getNavi8(cameraPosition.target));
-                LogUtils.d("recovered position  "+ MapUtils.GetLatLngNavi8(MapUtils.getNavi8(cameraPosition.target)));
+                LogUtils.d("recovered position  " + MapUtils.GetLatLngNavi8(MapUtils.getNavi8(cameraPosition.target)));
                 //����������� �������� ����� � �����
                 new GetPostAddr().execute(new LatLng(cameraPosition.target.latitude, cameraPosition.target.longitude));
             }
@@ -270,7 +270,7 @@ public class MainMenu extends ActionBarActivity implements OnMapReadyCallback {
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                Thread.sleep(15000);
+                Thread.sleep(3000);
             } catch (InterruptedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -279,9 +279,12 @@ public class MainMenu extends ActionBarActivity implements OnMapReadyCallback {
         }
 
         protected void onPostExecute(Void result) {
-            if (!location_found) {
+            /*if (!location_found) {
                 ((TextView) findViewById(R.id.NoLocationFound)).setVisibility(View.VISIBLE);
-            }
+            }*/
+
+            ((RelativeLayout) findViewById(R.id.layout_map)).setVisibility(View.VISIBLE);
+            ((LinearLayout) findViewById(R.id.layout_start)).setVisibility(View.GONE);
         }
     }
 

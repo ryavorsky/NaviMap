@@ -1,7 +1,7 @@
 <resources>
 
-    <string name="app_name">Navi Map 0.0.8</string>
-    <string name="title">Navi Map</string>
+    <string name="title">NAVIADDRESS</string>
+    <string name="app_name">NAVIADDRESS 0.0.9</string>
     <string name="no_location">Can\'t define your location. Please, check your GPS/Network connection.</string>
     <string name="pickup_title">"NAVIADDRESS: "</string>
     <string name="error_receiving_addresses">Ошибка при получении списка адресов</string>

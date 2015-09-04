@@ -1,6 +1,5 @@
 package com.navimap.utils;
 
-import android.location.Location;
 import com.google.android.gms.maps.model.LatLng;
 import com.navimap.settings.Constants;
 
@@ -39,7 +38,7 @@ public class MapUtils {
 
         if (navi1 < 0 || navi1 > 9999 || navi2 < 0 || navi2 > 9999) {
             d[0] = latLng.latitude*k1+55000000;
-            d[1] = latLng.latitude*k2+55000000;
+            d[1] = latLng.longitude*k2+55000000;
             int[] dist = new int[2];
             dist[0] = (int) (d[0]/10);
             dist[1] = (int) (d[1]/10);
@@ -57,8 +56,8 @@ public class MapUtils {
         String strNaviCode = code.substring(code.indexOf(" ")).replace(" ","");
         int naviCode = Integer.parseInt(strNaviCode);
         int cityCode = Integer.parseInt(strCityNaviCode);
-        int[] d = new int[]{(int)Math.floor(naviCode/10000),naviCode%10000};
         if (cityCode<100000) {
+            int[] d = new int[]{(int)Math.floor(naviCode/10000),naviCode%10000};
             City city = null;
             for (City item : City.values()) {
                 if (item.getNaviCode().equals(strCityNaviCode))
@@ -75,8 +74,8 @@ public class MapUtils {
             dist[1] = cityCode%1000 *10000+ naviCode%10000;
             dist[0] = dist[0]*10-55000000;
             dist[1] = dist[1]*10-55000000;
-            double lat = d[0]/k1;
-            double lng = d[1]/k2;
+            double lat = dist[0]/k1;
+            double lng = dist[1]/k2;
             latLng = new LatLng(lat, lng);
         }
         return latLng;
